@@ -80,6 +80,10 @@ def add_security_headers(response):
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'  # or 'redis', etc.
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24))  # Required for CSRF protection
+# Secure session cookie settings
+app.config['SESSION_COOKIE_SECURE'] = True      # Only send cookie over HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True    # Prevent JavaScript access to the cookie
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'   # Or 'Strict' for even more security
 Session(app)
 
 # Initialize CSRF protection
