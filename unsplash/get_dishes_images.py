@@ -2,12 +2,11 @@ import requests
 import os
 import sys
 sys.path.append('..')  # Add parent directory to Python path
-import x
 
 # Unsplash search endpoint for photos
 url = "https://api.unsplash.com/search/photos"
 headers = {
-    "Authorization": f"Client-ID {x.UNSPLASH_ACCESS_KEY}"
+    "Authorization": f"Client-ID tKI4eDQ1J-kv_dEhpC1gRN_JNM7DPUsPT0CskyGgnj4"
 }
 
 # Search parameters

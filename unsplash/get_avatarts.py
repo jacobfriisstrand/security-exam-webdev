@@ -1,12 +1,12 @@
 import os
 import requests
 import time
-import x
+# import x
 
 # Unsplash API key
 url = 'https://api.unsplash.com/photos/random'
 headers = {
-    'Authorization': f'Client-ID {x.UNSPLASH_ACCESS_KEY}'
+    'Authorization': f'Client-ID tKI4eDQ1J-kv_dEhpC1gRN_JNM7DPUsPT0CskyGgnj4'
 }
 
 # Folder to save images
