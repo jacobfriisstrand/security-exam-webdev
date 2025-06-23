@@ -30,10 +30,10 @@ def raise_custom_exception(error, status_code):
 ##############################
 def db():
     db = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),      # Use environment variable or default to localhost
-        user=os.getenv("DB_USER"),           # Use environment variable or default to root
-        password=os.getenv("DB_PASSWORD"), # Use environment variable or default to password
-        database=os.getenv("DB_NAME")     # Use environment variable or default to company
+        host="jaco576u.mysql.eu.pythonanywhere-services.com",      # Use environment variable or default to localhost
+        user="jaco576u",           # Use environment variable or default to root
+        password="sqPm4wrByIByz13", # Use environment variable or default to password
+        database="jaco576u$company"     # Use environment variable or default to company
     )
     cursor = db.cursor(dictionary=True)
     return db, cursor
