@@ -7,6 +7,7 @@ requests == 2.32.3
 faker == 30.8.2
 pillow == 11.0.0 
 python-dotenv == 1.0.1 
+markupsafe == 2.1.5
 # Testing dependencies
 pytest == 8.0.0
 pytest-cov == 4.1.0
