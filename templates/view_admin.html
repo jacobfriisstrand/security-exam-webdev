@@ -1,104 +1,77 @@
 {% include "_top.html" %}
 
 <main class="w-full px-2 md:px-20 py-8 space-y-12 bg-gray-100">
-    <h1 class="text-2xl font-bold text-center mb-8">Admin Dashboard</h1>
+  <h1 class="text-2xl font-bold text-center mb-8">Admin Dashboard</h1>
 
-    <!-- Users Table -->
-    <section>
-        <h2 class="text-xl font-semibold mb-4">Manage Users</h2>
-        <div class="overflow-x-auto max-h-[40vh] border border-gray-300 rounded-lg">
-            <table class="table-auto w-full border-collapse text-sm">
-                <thead class="bg-gray-100 text-gray-800">
-                    <tr>
-                        <th class="border px-4 py-2">Role</th>
-                        <th class="border px-4 py-2">First Name</th>
-                        <th class="border px-4 py-2">Last Name</th>
-                        <th class="border px-4 py-2">Email</th>
-                        <th class="border px-4 py-2">Status</th>
-                        <th class="border px-4 py-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr class="{{ 'bg-gray-100' if loop.index % 2 == 0 else 'bg-gray-50' }}">
-                        <td class="border px-4 py-2">{{ user.role_name }}</td>
-                        <td class="border px-4 py-2">{{ user.user_name }}</td>
-                        <td class="border px-4 py-2">{{ user.user_last_name }}</td>
-                        <td class="border px-4 py-2">{{ user.user_email }}</td>
-                        <td class="border px-4 py-2">
-                            {{ user.user_deleted_at if user.user_deleted_at else 'Active' }}
-                        </td>
-                        <td class="border px-4 py-2">
-                            {% if user.user_deleted_at == 0 %}
-                                {% if user.user_blocked_at == 0 %}
-                                    {% include "___btn_block_user.html" %}
-                                {% else %}
-                                    {% include "___btn_unblock_user.html" %}
-                                {% endif %}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center text-gray-500 py-4">
-                            No users found.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
+  <!-- Users Table -->
+  <section>
+    <h2 class="text-xl font-semibold mb-4">Manage Users</h2>
+    <div class="overflow-x-auto max-h-[40vh] border border-gray-300 rounded-lg">
+      <table class="table-auto w-full border-collapse text-sm">
+        <thead class="bg-gray-100 text-gray-800">
+          <tr>
+            <th class="border px-4 py-2">Role</th>
+            <th class="border px-4 py-2">First Name</th>
+            <th class="border px-4 py-2">Last Name</th>
+            <th class="border px-4 py-2">Email</th>
+            <th class="border px-4 py-2">Status</th>
+            <th class="border px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr class="{{ 'bg-gray-100' if loop.index % 2 == 0 else 'bg-gray-50' }}">
+            <td class="border px-4 py-2">{{ user.role_name }}</td>
+            <td class="border px-4 py-2">{{ user.user_name }}</td>
+            <td class="border px-4 py-2">{{ user.user_last_name }}</td>
+            <td class="border px-4 py-2">{{ user.user_email }}</td>
+            <td class="border px-4 py-2">{{ user.user_deleted_at if user.user_deleted_at else 'Active' }}</td>
+            <td class="border px-4 py-2">{% if user.user_deleted_at == 0 %} {% if user.user_blocked_at == 0 %} {% include "___btn_block_user.html" %} {% else %} {% include "___btn_unblock_user.html" %} {% endif %} {% endif %}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-gray-500 py-4">No users found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-    <!-- Items Table -->
-    <section>
-        <h2 class="text-xl font-semibold mb-4">Manage Items</h2>
-        <div class="overflow-x-auto max-h-[40vh] border border-gray-300 rounded-lg">
-            <table class="table-auto w-full border-collapse text-sm">
-                <thead class="bg-gray-100 text-gray-800">
-                    <tr>
-                        <th class="border px-4 py-2">Item Title</th>
-                        <th class="border px-4 py-2">Price</th>
-                        <th class="border px-4 py-2">Image</th>
-                        <th class="border px-4 py-2">Status</th>
-                        <th class="border px-4 py-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                    <tr class="{{ 'bg-gray-100' if loop.index % 2 == 0 else 'bg-gray-50' }}">
-                        <td class="border px-4 py-2">{{ item.item_title }}</td>
-                        <td class="border px-4 py-2">{{ item.item_price }} DKK</td>
-                        <td class="border px-4 py-2">
-                            <img src="{{ url_for('static', filename='dishes/' + item['image']) }}"
-                                alt="{{ item['item_title'] }}" 
-                                class="w-12 h-12 object-cover rounded">
-
-                        </td>
-                        <td class="border px-4 py-2">
-                            {{ item.item_deleted_at if item.item_deleted_at else 'Active' }}
-                        </td>
-                        <td class="border px-4 py-2">
-                            {% if item.item_deleted_at == 0 %}
-                                {% if item.item_blocked_at == 0 %}
-                                    {% include "___btn_block_item.html" %}
-                                {% else %}
-                                    {% include "___btn_unblock_item.html" %}
-                                {% endif %}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center text-gray-500 py-4">
-                            No items found.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
+  <!-- Items Table -->
+  <section>
+    <h2 class="text-xl font-semibold mb-4">Manage Items</h2>
+    <div class="overflow-x-auto max-h-[40vh] border border-gray-300 rounded-lg">
+      <table class="table-auto w-full border-collapse text-sm">
+        <thead class="bg-gray-100 text-gray-800">
+          <tr>
+            <th class="border px-4 py-2">Item Title</th>
+            <th class="border px-4 py-2">Price</th>
+            <th class="border px-4 py-2">Image</th>
+            <th class="border px-4 py-2">Status</th>
+            <th class="border px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr class="{{ 'bg-gray-100' if loop.index % 2 == 0 else 'bg-gray-50' }}">
+            <td class="border px-4 py-2">{{ item.item_title }}</td>
+            <td class="border px-4 py-2">{{ item.item_price }} DKK</td>
+            <td class="border px-4 py-2">
+              <img src="{{ url_for('unsplash', filename='dishes/' + item['image']) }}" alt="{{ item['item_title'] }}" class="w-12 h-12 object-cover rounded" />
+            </td>
+            <td class="border px-4 py-2">{{ item.item_deleted_at if item.item_deleted_at else 'Active' }}</td>
+            <td class="border px-4 py-2">{% if item.item_deleted_at == 0 %} {% if item.item_blocked_at == 0 %} {% include "___btn_block_item.html" %} {% else %} {% include "___btn_unblock_item.html" %} {% endif %} {% endif %}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-gray-500 py-4">No items found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 </main>
 
 {% include "_bottom.html" %}
