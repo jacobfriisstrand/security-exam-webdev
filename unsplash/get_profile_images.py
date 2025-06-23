@@ -16,7 +16,7 @@ search_params = {
 }
 
 # Folder to save images
-save_folder = "avatars"
+save_folder = "../static/unsplash/avatars"
 os.makedirs(save_folder, exist_ok=True)
 
 def download_image(image_url, save_path):

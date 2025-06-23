@@ -10,7 +10,7 @@ headers = {
 }
 
 # Folder to save images
-save_folder = '../images'
+save_folder = '../static/unsplash/avatars'
 os.makedirs(save_folder, exist_ok=True)
 
 def get_random_images(total_images=100, batch_size=30):

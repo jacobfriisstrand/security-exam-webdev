@@ -16,7 +16,7 @@ search_params = {
 }
 
 # Folder to save images
-save_folder = "restaurant"
+save_folder = "../static/unsplash/restaurant"
 os.makedirs(save_folder, exist_ok=True)
 
 def download_image(image_url, save_path):
