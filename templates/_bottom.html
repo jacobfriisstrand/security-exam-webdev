@@ -3,7 +3,7 @@
         <!-- Logo and tagline -->
         <div class="flex flex-col items-center md:items-start">
             <a href="{{ url_for('view_index') }}" class="mb-2">
-                <img src="{{ url_for('static', filename='images/foodnest_logo.png') }}" alt="FoodNest Logo" class="h-10">
+                <img src="/static/images/foodnest_logo.png" alt="FoodNest Logo" class="h-10">
             </a>
             <p class="text-sm text-center md:text-left">
                 FoodNest: Discover the best flavors around you.
@@ -41,8 +41,8 @@
 </footer>
 
 
-<script src="{{url_for('static', filename='app.js')}}"></script>
-<script src="{{url_for('static', filename='mixhtml.js')}}"></script>
+<script src="/static/app.js"></script>
+<script src="/static/mixhtml.js"></script>
 
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

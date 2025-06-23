@@ -2,7 +2,7 @@
   <!-- Image Gallery -->
   <div class="relative w-full md:w-32 h-[20rem] md:h-auto flex items-center justify-center overflow-hidden rounded-sm image-gallery mb-4 md:mb-0">
     {% for image in item['images'] %}
-    <img class="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-700 ease-in-out" src="{{ url_for('unsplash', filename='dishes/' + image['item_image']) }}" alt="{{ item['item_title'] }}" />
+    <img class="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-700 ease-in-out" src="/static/unsplash/dishes/{{ image['item_image'] }}" alt="{{ item['item_title'] }}" />
     {% endfor %}
 
     <!-- Navigation Arrows -->

@@ -2,7 +2,7 @@
   <!-- Image -->
   <div class="image-gallery flex justify-center mb-4">
     {% if item['image'] %}
-    <img class="w-full max-h-48 object-cover rounded" src="{{ url_for('unsplash', filename='dishes/' + item['image']) }}" alt="{{ item['item_title'] }}" />
+    <img class="w-full max-h-48 object-cover rounded" src="/static/unsplash/dishes/{{ item['image'] }}" alt="{{ item['item_title'] }}" />
     {% else %}
     <div class="w-full max-h-48 bg-gray-200 flex items-center justify-center text-gray-400 rounded">No Image Available</div>
     {% endif %}

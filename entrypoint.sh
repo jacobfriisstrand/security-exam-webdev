@@ -22,7 +22,7 @@ initDatabase(){
     sleep 20
     
     echo "Initializing database schema..."
-    if ! mariadb -h db -u root -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_DATABASE}" --ssl=0 --default-auth=mysql_native_password < schema.sql; then
+    if ! mariadb -h db -u root -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_DATABASE}" < schema.sql --ssl=0 --default-auth=mysql_native_password; then
         echo "❌ Failed to initialize database schema"
         exit 1
     fi

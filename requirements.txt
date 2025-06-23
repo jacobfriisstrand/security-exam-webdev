@@ -16,3 +16,4 @@ gunicorn == 21.2.0
 pip-audit == 2.7.0 
 
 flask-wtf
+flask_wtf

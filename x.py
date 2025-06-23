@@ -29,11 +29,17 @@ def raise_custom_exception(error, status_code):
 
 ##############################
 def db():
+    # Get database configuration from environment variables
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_user = os.getenv("DB_USER", "root")
+    db_password = os.getenv("DB_PASSWORD", "password")
+    db_name = os.getenv("DB_NAME", "company")
+    
     db = mysql.connector.connect(
-        host="jaco576u.mysql.eu.pythonanywhere-services.com",      # Use environment variable or default to localhost
-        user="jaco576u",           # Use environment variable or default to root
-        password="sqPm4wrByIByz13", # Use environment variable or default to password
-        database="jaco576u$company"     # Use environment variable or default to company
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
     cursor = db.cursor(dictionary=True)
     return db, cursor

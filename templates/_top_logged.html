@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='mixhtml.css') }}" />
+    <link rel="stylesheet" href="/static/mixhtml.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>{{ title or "FoodNest Dashboard" }}</title>
@@ -19,11 +19,11 @@
         <div class="flex items-center space-x-4">
           {% if "restaurant" in session.get("user", {}).get("roles", []) %}
           <a href="{{ url_for('view_user_restaurant') }}">
-            <img src="{{ url_for('static', filename='images/foodnest_logo.png') }}" alt="FoodNest Logo" class="h-10" />
+            <img src="/static/images/foodnest_logo.png" alt="FoodNest Logo" class="h-10" />
           </a>
           {% else %}
           <a href="{{ url_for('view_index') }}">
-            <img src="{{ url_for('static', filename='images/foodnest_logo.png') }}" alt="FoodNest Logo" class="h-10" />
+            <img src="/static/images/foodnest_logo.png" alt="FoodNest Logo" class="h-10" />
           </a>
           {% endif %}
           <h1 class="text-xl font-bold">FoodNest</h1>
