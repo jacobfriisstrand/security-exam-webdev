@@ -157,7 +157,7 @@ def view_user_restaurant():
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code    
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
-            return "<template>System upgrating</template>", 500        
+            return "<template>System upgrading</template>", 500        
         return "<template>System under maintenance</template>", 500  
     finally:
         if "cursor" in locals(): cursor.close()
@@ -206,7 +206,13 @@ def view_restaurant(user_pk):
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
-        return "<template>System under maintenance</template>", 500
+        if isinstance(ex, x.CustomException): 
+            toast = render_template("___toast.html", message=ex.message)
+            return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code    
+        if isinstance(ex, x.mysql.connector.Error):
+            ic(ex)
+            return "<template>System upgrading</template>", 500        
+        return "<template>System under maintenance</template>", 500  
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
