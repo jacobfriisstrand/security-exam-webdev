@@ -3,6 +3,7 @@ from flask_session import Session
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
+from markupsafe import escape
 import x
 import os
 import uuid 
@@ -574,8 +575,7 @@ def view_search():
             return redirect(url_for("view_user_restaurant"))
         
         # Get the search query from the URL parameters
-        search_query = request.args.get('q', '').strip()
-        ic(search_query)
+        raw_search_query = request.args.get('q', '').strip()
 
         db, cursor = x.db()
 
@@ -590,12 +590,11 @@ def view_search():
             AND LOWER(items.item_title) LIKE LOWER(%s)
             GROUP BY items.item_pk
             LIMIT 12
-        """, (f"%{search_query}%",))
+        """, (f"%{raw_search_query}%",))
         items = cursor.fetchall()
 
         for item in items:
             item['images'] = [{'item_image': img} for img in (item.get('images', '') or '').split(',') if img]
-
 
         # Query to search for users with the 'restaurant' role
         cursor.execute("""
@@ -608,15 +607,18 @@ def view_search():
             AND (LOWER(users.user_name) LIKE LOWER(%s)
                  OR LOWER(users.user_email) LIKE LOWER(%s))
             LIMIT 8
-        """, (f"%{search_query}%", f"%{search_query}%"))
+        """, (f"%{raw_search_query}%", f"%{raw_search_query}%"))
         restaurants = cursor.fetchall()
+
+        # Sanitize search query for safe display in template
+        sanitized_search_query = escape(raw_search_query)
 
         # Render the search results
         return render_template("view_search.html", 
                                title="Search Results", 
                                items=items, 
                                restaurants=restaurants,
-                               search_query=search_query)
+                               search_query=sanitized_search_query)
 
     except Exception as ex:
         # Handle errors and rollback if necessary
