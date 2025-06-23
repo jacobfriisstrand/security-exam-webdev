@@ -14,6 +14,43 @@ import re
 from icecream import ic
 ic.configureOutput(prefix=f'***** | ', includeContext=True)
 
+def sanitize_output(data):
+    """Central sanitization function for all output data"""
+    if data is None:
+        return ""
+    
+    if isinstance(data, dict):
+        return {key: sanitize_output(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [sanitize_output(item) for item in data]
+    else:
+        return escape(str(data))
+
+def sanitize_user_data(user):
+    """Sanitize user data specifically"""
+    if not user:
+        return {}
+    return {
+        'user_pk': sanitize_output(user.get('user_pk')),
+        'user_name': sanitize_output(user.get('user_name')),
+        'user_last_name': sanitize_output(user.get('user_last_name')),
+        'user_email': sanitize_output(user.get('user_email')),
+        'roles': user.get('roles', [])  # Roles are validated, no need to escape
+    }
+
+def sanitize_item_data(item):
+    """Sanitize item data specifically"""
+    if not item:
+        return {}
+    return {
+        'item_pk': sanitize_output(item.get('item_pk')),
+        'item_title': sanitize_output(item.get('item_title')),
+        'item_description': sanitize_output(item.get('item_description')),
+        'item_price': sanitize_output(item.get('item_price')),
+        'image': sanitize_output(item.get('image')),
+        'images': item.get('images', [])  # Images are filenames, validated
+    }
+
 def add_security_headers(response):
     # Content Security Policy
     csp_policy = (
@@ -111,7 +148,7 @@ def view_index():
             ic(ex)
             if "db" in locals(): db.rollback()
             if isinstance(ex, x.CustomException): 
-                toast = render_template("___toast.html", message="ex.message")
+                toast = render_template("___toast.html", message=sanitize_output(ex.message))
                 return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code    
             if isinstance(ex, x.mysql.connector.Error):
                 ic(ex)
@@ -148,13 +185,17 @@ def view_user_restaurant():
         cursor.execute(q, (user_pk,))
         items = cursor.fetchall()
 
-        return render_template("view_user_restaurant.html", user=user, items=items)
+        # Sanitize user data before sending to template
+        sanitized_user = sanitize_user_data(user)
+        sanitized_items = [sanitize_item_data(item) for item in items]
+
+        return render_template("view_user_restaurant.html", user=sanitized_user, items=sanitized_items)
     
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
         if isinstance(ex, x.CustomException): 
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code    
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
@@ -202,13 +243,17 @@ def view_restaurant(user_pk):
         if not restaurant:
             return "<template>Restaurant not found</template>", 404
 
-        return render_template("view_restaurant.html", items=items, restaurant=restaurant)
+        # Sanitize data before sending to template
+        sanitized_restaurant = sanitize_output(restaurant)
+        sanitized_items = [sanitize_item_data(item) for item in items]
+
+        return render_template("view_restaurant.html", items=sanitized_items, restaurant=sanitized_restaurant)
 
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
         if isinstance(ex, x.CustomException): 
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code    
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
@@ -251,13 +296,16 @@ def view_dishes():
         for item in items:
             item['images'] = [{'item_image': img} for img in (item.get('images', '') or '').split(',') if img]
 
-        return render_template("view_dishes.html", items=items, next_page=2)
+        # Sanitize items data before sending to template
+        sanitized_items = [sanitize_item_data(item) for item in items]
+
+        return render_template("view_dishes.html", items=sanitized_items, next_page=2)
     
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
         if isinstance(ex, x.CustomException): 
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code    
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
@@ -298,7 +346,8 @@ def more_items(page_number):
         # Generate HTML for new items
         html = ""
         for item in items:
-            html_item = render_template("__item_purchase.html", item=item)
+            sanitized_item = sanitize_item_data(item)
+            html_item = render_template("__item_purchase.html", item=sanitized_item)
             html += html_item
 
         # Check if more items are available
@@ -324,7 +373,7 @@ def more_items(page_number):
         if "db" in locals():
             db.rollback()
         if isinstance(ex, x.CustomException):
-            return f"""<template mix-target="#toast" mix-bottom>{ex.message}</template>""", ex.code
+            return f"""<template mix-target="#toast" mix-bottom>{sanitize_output(ex.message)}</template>""", ex.code
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
             return "<template>Database error</template>", 500
@@ -368,7 +417,7 @@ def view_edit_item(item_pk):
         if "db" in locals():
             db.rollback()
         if isinstance(ex, x.CustomException):
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
@@ -422,15 +471,20 @@ def view_admin():
         else:
             message = ""
 
+        # Sanitize data before sending to template
+        sanitized_users = [sanitize_user_data(user) for user in users]
+        sanitized_user = sanitize_user_data(user)
+        sanitized_items = [sanitize_item_data(item) for item in items]
+
         # Render the admin view with non-admin users
-        return render_template("view_admin.html", users=users, user=user, items=items, message=message)
+        return render_template("view_admin.html", users=sanitized_users, user=sanitized_user, items=sanitized_items, message=message)
 
     except Exception as ex:
         ic(ex)
         if "db" in locals():
             db.rollback()
         if isinstance(ex, x.CustomException):
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
@@ -448,14 +502,17 @@ def view_admin():
 @app.get("/customer-profile")
 def view_customer_profile ():
     user = session.get("user")
-    return render_template("view_customer_profile.html", user=user, x=x, title="Customer Profile")
+    sanitized_user = sanitize_user_data(user)
+    return render_template("view_customer_profile.html", user=sanitized_user, x=x, title="Customer Profile")
+
 ##############################
 @app.get("/customer-profile/<user_pk>")
 def view_customer_profile_delete (user_pk):
     user = session.get("user")
     if not user or user["user_pk"] != user_pk:
         return redirect(url_for("view_login"))
-    return render_template("view_customer_profile_delete.html", user=user, x=x, title="Delete your profile")
+    sanitized_user = sanitize_user_data(user)
+    return render_template("view_customer_profile_delete.html", user=sanitized_user, x=x, title="Delete your profile")
 
 ##############################
 @app.get("/forgot-password")
@@ -505,7 +562,7 @@ def verify_user(verification_key):
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
-        if isinstance(ex, x.CustomException): return ex.message, ex.code    
+        if isinstance(ex, x.CustomException): return sanitize_output(ex.message), ex.code
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
             return "Database under maintenance", 500        
@@ -647,7 +704,10 @@ def view_cart():
     cart_items = session.get("cart_items", [])
     total_price = sum(item["item_price"] for item in cart_items)
 
-    return render_template("view_cart.html", cart_items = cart_items, total_price = total_price)
+    # Sanitize cart items before sending to template
+    sanitized_cart_items = [sanitize_item_data(item) for item in cart_items]
+
+    return render_template("view_cart.html", cart_items=sanitized_cart_items, total_price=total_price)
 
 
 ##############################
@@ -716,7 +776,7 @@ def signup():
         # My own exception
         if isinstance(ex, x.CustomException):
             ic(x.CustomException)
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code
         
         # Database exception
@@ -759,7 +819,7 @@ def forgot_password():
 
         # My own exception
         if isinstance(ex, x.CustomException):
-            return f"""<template mix-target="#toast" mix-bottom>{ex.message}</template>""", ex.code
+            return f"""<template mix-target="#toast" mix-bottom>{sanitize_output(ex.message)}</template>""", ex.code
         
         # Database exception
         if isinstance(ex, x.mysql.connector.Error):
@@ -824,7 +884,7 @@ def login():
         if "db" in locals(): db.rollback()
         # My own exception
         if isinstance(ex, x.CustomException):
-            toast = render_template("___toast.html", message=ex.message)
+            toast = render_template("___toast.html", message=sanitize_output(ex.message))
             return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", ex.code
         
         if isinstance(ex, x.mysql.connector.Error):
@@ -880,7 +940,7 @@ def reset_password():
 
         # My own exception
         if isinstance(ex, x.CustomException):
-            return f"""<template mix-target="#toast" mix-bottom>{ex.message}</template>""", ex.code
+            return f"""<template mix-target="#toast" mix-bottom>{sanitize_output(ex.message)}</template>""", ex.code
         
         # Database exception
         if isinstance(ex, x.mysql.connector.Error):
@@ -958,14 +1018,14 @@ def create_item():
         # Commit changes
         db.commit()
 
-        toast = render_template("___toast.html", message="Item uploaded successfully")
+        toast = render_template("___toast.html", message=sanitize_output("Item uploaded successfully"))
         return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", 201  
 
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
         if isinstance(ex, x.CustomException):
-            return f"""<template mix-target="#toast" mix-bottom>{ex.message}</template>""", ex.code
+            return f"""<template mix-target="#toast" mix-bottom>{sanitize_output(ex.message)}</template>""", ex.code
         if isinstance(ex, x.mysql.connector.Error):
             ic(ex)
             if "users.user_email" in str(ex):
@@ -1029,7 +1089,7 @@ def add_to_cart(item_pk):
         ic(ex)
         if "db" in locals(): db.rollback()
         if isinstance(ex, x.CustomException): 
-            return f"""<template mix-target="#toast" mix-bottom>{ex.message}</template>""", ex.code
+            return f"""<template mix-target="#toast" mix-bottom>{sanitize_output(ex.message)}</template>""", ex.code
         if isinstance(ex, x.mysql.connector.Error):
             if "users.user_email" in str(ex): 
                 return "<template>email not available</template>", 400
@@ -1233,7 +1293,7 @@ def user_block(user_pk):
         q = 'UPDATE users SET user_blocked_at = %s, user_updated_at = %s WHERE user_pk = %s'
         cursor.execute(q, (user_blocked_at, user_updated_at, user_pk))
         if cursor.rowcount != 1: x.raise_custom_exception("cannot block user", 400)
-        btn_unblock = render_template("___btn_unblock_user.html", user=user)
+        btn_unblock = render_template("___btn_unblock_user.html", user=sanitize_user_data(user))
 
         q_select = 'SELECT * FROM users WHERE user_pk = %s'
         cursor.execute(q_select, (user_pk,))
@@ -1278,7 +1338,7 @@ def user_unblock(user_pk):
         q = 'UPDATE users SET user_blocked_at = %s WHERE user_pk = %s'
         cursor.execute(q, (user_blocked_at, user_pk))
         if cursor.rowcount != 1: x.raise_custom_exception("cannot unblock user", 400)
-        btn_block = render_template("___btn_block_user.html", user=user)
+        btn_block = render_template("___btn_block_user.html", user=sanitize_user_data(user))
 
         db.commit()
         return f"""<template mix-target="#unblock-{user_pk}"
@@ -1348,7 +1408,7 @@ def item_block(item_pk):
         x.send_item_blocked_email(user_email, user_name, item_title)
 
         # Render the unblock button
-        btn_unblock = render_template("___btn_unblock_item.html", item=item)
+        btn_unblock = render_template("___btn_unblock_item.html", item=sanitize_item_data(item))
 
         # Commit changes to the database
         db.commit()
@@ -1399,7 +1459,7 @@ def item_unblock(item_pk):
             x.raise_custom_exception("Cannot unblock item", 400)
 
         # Render the block button
-        btn_block = render_template("___btn_block_item.html", item=item)
+        btn_block = render_template("___btn_block_item.html", item=sanitize_item_data(item))
 
         # Commit changes to the database
         db.commit()
@@ -1538,7 +1598,7 @@ def edit_item(item_pk):
 
         db.commit()
 
-        toast = render_template("___toast.html", message="Item updated successfully")
+        toast = render_template("___toast.html", message=sanitize_output("Item updated successfully"))
         return f"""<template mix-target="#toast" mix-bottom>{toast}</template>""", 200
 
     except Exception as ex:
