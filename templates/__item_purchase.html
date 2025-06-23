@@ -1,0 +1,30 @@
+<div class="item flex flex-col md:flex-row overflow-hidden bg-white shadow rounded-lg p-4">
+  <!-- Image Gallery -->
+  <div class="relative w-full md:w-32 h-[20rem] md:h-auto flex items-center justify-center overflow-hidden rounded-sm image-gallery mb-4 md:mb-0">
+    {% for image in item['images'] %}
+    <img class="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-700 ease-in-out" src="{{ url_for('static', filename='dishes/' + image['item_image']) }}" alt="{{ item['item_title'] }}" />
+    {% endfor %}
+
+    <!-- Navigation Arrows -->
+    {% if item['images']|length > 1 %}
+    <button class="absolute left-2 z-10 bg-gray-800 bg-opacity-50 text-white px-2 py-1 rounded-full hover:bg-opacity-75" data-action="prev">&larr;</button>
+    <button class="absolute right-2 z-10 bg-gray-800 bg-opacity-50 text-white px-2 py-1 rounded-full hover:bg-opacity-75" data-action="next">&rarr;</button>
+    {% endif %}
+  </div>
+
+  <!-- Text Content -->
+  <div class="flex flex-col justify-between flex-1 md:pl-4">
+    <!-- Title -->
+    <h2 class="font-bold text-xl text-gray-800 mb-2">{{ item["item_title"] }}</h2>
+    <!-- Description -->
+    <p class="text-gray-600 text-sm mb-4">{{ item["item_description"] }}</p>
+    <!-- Price and Button -->
+    <div class="mt-auto">
+      <div class="text-lg font-semibold text-gray-800 mb-2"><span class="font-bold">{{ item["item_price"] }}</span> Dkk.</div>
+      <form id="frm_item_purchase" class="inline-block">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button mix-post="/add-to-cart/{{ item['item_pk'] }}" mix-data="#frm_item_purchase" class="py-2 px-4 bg-[#FFA726] text-white rounded hover:bg-[#FB8C00] text-center">Purchase</button>
+      </form>
+    </div>
+  </div>
+</div>

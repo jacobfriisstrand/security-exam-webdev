@@ -1,0 +1,66 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: db
+    env_file:
+      - "env-$RTE"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - dbnet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      interval: 15s
+      retries: 5
+      start_period: 60s
+
+  app:
+    image: registry.gitlab.com/dev-env-exam-jona08p0-jaco576u/dev-env-exam-food-nest
+    container_name: food_nest
+    env_file:
+      - "env-$RTE"
+    volumes:
+      - ./entrypoint.sh:/app/entrypoint.sh
+      - .:/app
+      - images_data:/app/images
+    depends_on:
+      - mysql
+    networks:
+      - dbnet
+      - webnet
+    ports:
+      - "4000:4000"
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/foodnest.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    networks:
+      - webnet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    platform: linux/amd64
+    container_name: phpmyadmin
+    env_file:
+      - "env-$RTE"
+    ports:
+      - 9090:80
+    networks:
+      - dbnet
+
+volumes:
+  mysql_data:
+  images_data:
+
+networks:
+  webnet:
+  dbnet:

@@ -1,0 +1,27 @@
+{% include "_top.html" %}
+
+<main class="w-full min-h-screen p-6 bg-gray-100">
+    <!-- Restaurant Header -->
+    <header class="text-center mb-6 bg-white shadow rounded-lg py-4">
+        <h1 class="text-2xl font-bold text-gray-800">{{ user['user_name'] }}'s Restaurant</h1>
+        <p class="text-gray-500 text-lg">{{ user['user_email'] }}</p>
+    </header>
+
+    <section class="w-full mx-auto bg-white shadow rounded-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Menu Items</h2>
+            <a href="{{ url_for('view_add_item') }}" 
+               class="py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                Add New Item
+            </a>
+        </div>
+
+        <div id="items" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {% for item in items %}
+                {% include "__item.html" %}
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+{% include "_bottom.html" %}

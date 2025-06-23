@@ -1,0 +1,56 @@
+{% include "_top.html" %}
+
+<main class="w-full min-h-screen p-6 bg-gray-100">
+  <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-8">Your Shopping Cart</h1>
+
+  {% if cart_items %}
+  <div class="max-w-4xl mx-auto bg-white rounded-md p-6">
+    <!-- Cart Items List -->
+    <ul class="divide-y divide-gray-300">
+      {% for item in cart_items %}
+      <li class="flex flex-col sm:flex-row items-center justify-between py-4">
+        <!-- Item Details -->
+        <div class="flex items-center sm:items-start space-x-4 w-full">
+          <div class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
+            <img src="{{ url_for('static', filename='dishes/' + item['item_image']) }}" alt="{{ item['item_title'] }}" class="object-cover w-full h-full" />
+          </div>
+          <div class="flex-1">
+            <h2 class="text-lg font-bold text-gray-800">{{ item["item_title"] }}</h2>
+            <p class="text-sm text-gray-600">{{ item["item_description"] }}</p>
+            <p class="text-sm font-semibold text-gray-700">Price: {{ item["item_price"] }} Dkk</p>
+          </div>
+        </div>
+        <!-- Remove Button -->
+        <div class="mt-4 sm:mt-0 sm:ml-4 w-full sm:w-auto">
+          <form id="frm-remove-from-cart">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button mix-post="/remove-from-cart/{{ item['item_pk'] }}" mix-data="#frm-remove-from-cart" class="py-2 px-4 w-full text-center text-gray-800 border border-gray-400 rounded-md hover:text-red-500 hover:border-red-500">Remove</button>
+          </form>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Total Price and Actions -->
+    <div class="pt-6 border-t mt-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Total Price: {{ total_price }} Dkk</h2>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+        <a href="{{ url_for('view_dishes') }}" class="py-2 px-6 text-[#FFA726] border border-[#FFA726] rounded-md hover:bg-[#FFA726] hover:text-white font-semibold text-center"> Continue Shopping </a>
+        {% if session.get("user") %}
+        <form id="frm-checkout">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button mix-post="/checkout-mail" mix-data="#frm-checkout" class="py-2 px-6 bg-[#FFA726] text-white rounded-md hover:bg-[#FB8C00] font-semibold text-center">Proceed to Checkout</button>
+        </form>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="py-2 px-6 bg-gray-800 text-white rounded-md hover:bg-gray-700 font-semibold text-center"> Login to Checkout </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <!-- Empty Cart Message -->
+  <p class="text-center text-gray-600 text-lg mt-12">Your cart is empty. <a href="{{ url_for('view_dishes') }}" class="text-[#FFA726] hover:underline font-semibold">Browse items</a>.</p>
+  {% endif %}
+</main>
+
+{% include "_bottom.html" %}

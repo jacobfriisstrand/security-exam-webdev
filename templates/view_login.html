@@ -1,0 +1,43 @@
+{% include "_top.html" %}
+
+<main class="w-full h-auto sm:h-screen py-8 sm:py-1 flex items-center bg-gray-100">
+  <!-- Login Form -->
+  <form id="frm_user_login" class="w-full max-w-sm mx-auto bg-white shadow-md rounded-lg p-6 flex flex-col gap-6">
+    <!-- CSRF Token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <!-- Display Message -->
+    {% if message %}
+    <div class="text-green-500 text-center text-lg">{{ message }}</div>
+    {% endif %}
+
+    <h1 class="text-xl font-bold text-gray-800 text-center">Create an account or log in</h1>
+    <p class="text-sm text-gray-600 text-center mb-4">Log in below or create a new FoodNest profile.</p>
+
+    <!-- Email Field -->
+    <div class="flex flex-col">
+      <label for="user_email" class="text-gray-700 font-medium mb-1"> Email </label>
+      <input name="user_email" type="text" mix-check="{{ x.REGEX_EMAIL }}" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter your email" required />
+    </div>
+
+    <!-- Password Field -->
+    <div class="flex flex-col">
+      <label for="user_password" class="text-gray-700 font-medium mb-1"> Password </label>
+      <input name="user_password" type="password" mix-check="{{ x.REGEX_USER_PASSWORD }}" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter your password" required />
+    </div>
+
+    <!-- Login Button -->
+    <button mix-post="/login" mix-data="#frm_user_login" class="py-2 px-4 bg-[#FFA726] text-white rounded-lg hover:bg-[#FB8C00] font-bold">Login</button>
+
+    <!-- Forgot Password and Signup Links -->
+    <div class="text-center text-sm text-gray-600 mt-4">
+      <a href="{{url_for('view_forgot_password')}}" class="text-[#FFA726] hover:underline"> Forgot Password? </a>
+    </div>
+    <div class="text-center text-sm text-gray-600">
+      <span>Don't have an account? </span>
+      <a href="{{url_for('view_signup')}}" class="text-[#FFA726] hover:underline"> Signup </a>
+    </div>
+  </form>
+</main>
+
+{% include "_bottom.html" %}

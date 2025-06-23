@@ -1,0 +1,42 @@
+{% include "_top.html" %}
+
+<main class="w-full h-auto sm:min-h-screen py-8 sm:py-1 flex items-center bg-gray-100 px-4 py-8">
+  <form id="frm_customer_update" class="w-full max-w-lg mx-auto bg-white shadow-md rounded-lg p-6 flex flex-col gap-6">
+    <!-- CSRF Token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <!-- Display Message -->
+    {% if message %}
+    <div class="text-green-500 text-center text-lg">{{ message }}</div>
+    {% endif %}
+
+    <!-- Header -->
+    <h1 class="text-2xl font-bold text-gray-800 text-center">Hi {{ user.user_name }}, Edit your profile</h1>
+
+    <!-- First Name Field -->
+    <div class="flex flex-col">
+      <label for="user_name" class="text-gray-700 font-medium mb-1"> First Name </label>
+      <input name="user_name" type="text" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter first name" value="{{ user.user_name if user else '' }}" mix-check="{{ x.USER_NAME_REGEX }}" required />
+    </div>
+
+    <!-- Last Name Field -->
+    <div class="flex flex-col">
+      <label for="user_last_name" class="text-gray-700 font-medium mb-1"> Last Name </label>
+      <input name="user_last_name" type="text" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter last name" value="{{ user.user_last_name if user else '' }}" mix-check="{{ x.USER_LAST_NAME_REGEX }}" required />
+    </div>
+
+    <!-- Email Field -->
+    <div class="flex flex-col">
+      <label for="user_email" class="text-gray-700 font-medium mb-1"> Email </label>
+      <input name="user_email" type="email" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter email" value="{{ user.user_email if user else '' }}" mix-check="{{ x.REGEX_EMAIL }}" required />
+    </div>
+
+    <!-- Update Button -->
+    <button mix-put="/customer-profile" mix-data="#frm_customer_update" class="py-2 px-4 bg-[#FFA726] text-white rounded-lg hover:bg-[#FB8C00] font-bold">Update Profile</button>
+
+    <!-- Delete Profile Link -->
+    <a href="/customer-profile/{{ user.user_pk if user else '' }}" class="py-2 px-4 bg-red-500 text-white text-center rounded-lg hover:bg-red-600 font-bold"> Delete Profile </a>
+  </form>
+</main>
+
+{% include "_bottom.html" %}

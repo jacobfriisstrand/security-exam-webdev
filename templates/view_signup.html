@@ -1,0 +1,59 @@
+{% include "_top.html" %}
+
+<main class="w-full h-auto py-8 flex items-center justify-center bg-gray-100">
+  <!-- Signup Form -->
+  <form id="frm_user_signup" class="w-full max-w-[30rem] bg-white shadow-md rounded-lg p-6 flex flex-col gap-6">
+    <!-- CSRF Token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-center text-gray-800">Create Your FoodNest Account</h1>
+    <p class="text-sm text-center text-gray-600 mb-4">Join us and enjoy a world of delicious convenience.</p>
+
+    <!-- Role Selection -->
+    <div class="flex flex-col">
+      <label for="user_role" class="text-gray-700 font-medium mb-1"> Sign up as: </label>
+      <select name="user_role" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" required>
+        <option value="" disabled selected>Select your role</option>
+        <option value="c56a4180-65aa-42ec-a945-5fd21dec0538">Customer</option>
+        <option value="f47ac10b-58cc-4372-a567-0e02b2c3d479">Partner</option>
+        <option value="9f8c8d22-5a67-4b6c-89d7-58f8b8cb4e15">Restaurant</option>
+      </select>
+    </div>
+
+    <!-- First Name -->
+    <div class="flex flex-col">
+      <label for="user_name" class="text-gray-700 font-medium mb-1"> First Name </label>
+      <input name="user_name" type="text" mix-check="{{ x.USER_NAME_REGEX }}" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter your first name" required />
+    </div>
+
+    <!-- Last Name -->
+    <div class="flex flex-col">
+      <label for="user_last_name" class="text-gray-700 font-medium mb-1"> Last Name </label>
+      <input name="user_last_name" type="text" mix-check="{{ x.USER_LAST_NAME_REGEX }}" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter your last name" required />
+    </div>
+
+    <!-- Email -->
+    <div class="flex flex-col">
+      <label for="user_email" class="text-gray-700 font-medium mb-1"> Email </label>
+      <input name="user_email" type="email" mix-check="{{ x.REGEX_EMAIL }}" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="Enter your email" required />
+    </div>
+
+    <!-- Password -->
+    <div class="flex flex-col">
+      <label for="user_password" class="text-gray-700 font-medium mb-1"> Password </label>
+      <input name="user_password" type="password" mix-check="{{ x.REGEX_USER_PASSWORD }}" class="border rounded-lg p-2 text-gray-800 focus:ring-2 focus:ring-[#FFA726] focus:outline-none" placeholder="{{ x.USER_PASSWORD_MIN }} to {{ x.USER_PASSWORD_MAX }} characters" required />
+    </div>
+
+    <!-- Signup Button -->
+    <button mix-post="/signup" mix-data="#frm_user_signup" class="py-2 px-4 bg-[#FFA726] text-white rounded-lg hover:bg-[#FB8C00] font-bold">Signup</button>
+
+    <!-- Link to Login -->
+    <div class="text-center text-sm text-gray-600 mt-4">
+      <span>Already have an account? </span>
+      <a href="{{url_for('view_login')}}" class="text-[#FFA726] hover:underline"> Login </a>
+    </div>
+  </form>
+</main>
+
+{% include "_bottom.html" %}

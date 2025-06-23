@@ -1,0 +1,10 @@
+RTE=prod
+DB_HOST=mysql
+DB_USER=root
+DB_PASSWORD=password
+DB_NAME=company
+MYSQL_ROOT_PASSWORD=password
+MYSQL_DATABASE=company
+PMA_HOST=mysql
+PMA_USER=root
+PMA_PASSWORD=password

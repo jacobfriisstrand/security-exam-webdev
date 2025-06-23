@@ -1,0 +1,4 @@
+<form id="frm_item_block">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <button class="bg-red-500 hover:bg-red-400 border border-gray-700 text-gray-900 px-3 py-1 rounded-sm mr-2 h-10 cursor-pointer" id="block-{{ item['item_pk'] }}" mix-put="/items/block/{{ item.item_pk }}" mix-data="#frm_item_block">Block</button>
+</form>

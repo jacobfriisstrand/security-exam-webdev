@@ -1,0 +1,23 @@
+{% include "_top.html" %}
+
+<main class="w-full h-screen flex items-center">
+  <form id="frm_delete_profile" class="w-1/4 flex flex-col gap-4 mx-auto">
+    <!-- CSRF Token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="text-red-500 text-xl">{{ message }}</div>
+
+    <h1 class="text-2xl font-bold text-center text-red-600">Confirm Profile Deletion</h1>
+
+    <div class="flex flex-col">
+      <label for="user_password">
+        <span>Enter Your Password</span>
+      </label>
+      <input name="user_password" type="password" class="border rounded p-2" placeholder="Enter your password" mix-check="{{ x.REGEX_PASSWORD }}" required />
+    </div>
+
+    <button mix-put="/customer-profile/{{ user.user_pk if user else '' }}" mix-data="#frm_delete_profile" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 mt-4">Delete Profile</button>
+  </form>
+</main>
+
+{% include "_bottom.html" %}

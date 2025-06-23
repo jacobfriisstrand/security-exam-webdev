@@ -1,0 +1,11 @@
+<form id="frm_user_unblock">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+<button
+    class="bg-green-500 hover:bg-green-400 border border-gray-700 text-gray-900 px-3 py-1 rounded-sm mr-2 h-10 cursor-pointer"
+    id="unblock-{{ user['user_pk'] }}"
+    mix-put="/users/unblock/{{ user.user_pk }}"
+    mix-data="#frm_user_unblock">
+    Unblock
+</button>
+</form>
