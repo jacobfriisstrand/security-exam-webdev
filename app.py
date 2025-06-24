@@ -847,7 +847,6 @@ def forgot_password():
 ############################################################
 
 @app.post("/login")
-@csrf.exempt
 def login():
     try:
 
