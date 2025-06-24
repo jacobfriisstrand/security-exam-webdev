@@ -55,7 +55,7 @@ def add_security_headers(response):
     # Content Security Policy
     csp_policy = (
         "default-src 'self'; "
-        "script-src 'self' https://cdn.tailwindcss.com https://unpkg.com/leaflet/dist/leaflet.js; "  # Remove unsafe-inline and unsafe-eval
+        "script-src 'self' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com/leaflet/dist/leaflet.js; "  # Remove unsafe-inline and unsafe-eval
         "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com/leaflet/dist/leaflet.css; "  # Allow inline styles
         "img-src 'self' data: https:; "  # Allow images from self, data URIs, and HTTPS sources
         "font-src 'self' data:; "  # Allow fonts from self and data URIs
